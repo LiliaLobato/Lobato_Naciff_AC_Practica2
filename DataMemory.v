@@ -33,6 +33,6 @@ module DataMemory
 			ram[Address] <= WriteData;
 	end
 	assign ReadDataAux = ram[Address];
-  	assign ReadData = {DATA_WIDTH{MemRead}}& ReadDataAux;
+  	assign ReadData = {DATA_WIDTH{MemRead}} & ReadDataAux;
 
 endmodule

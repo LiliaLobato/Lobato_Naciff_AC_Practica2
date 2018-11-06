@@ -22,55 +22,47 @@ module ALU
 	input [3:0] ALUOperation,
 	input [31:0] A,
 	input [31:0] B,
-	input [4:0] shamt,
+	input [4:0] shamt, //se agrego shamt como input a la ALU
 	output reg Zero,
 	output reg [31:0]ALUResult
 );
+
+//Se declaran las instrucciones que podra ejecutar la ALU que corresponden a la salida de ALUControl
 localparam AND = 4'b0000;
 localparam OR  = 4'b0001;
 localparam NOR = 4'b0010;
 localparam ADD = 4'b0011;
 localparam SUB = 4'b0100;
-localparam SLL = 4'b0101;
-localparam SRL = 4'b0110;
+localparam SRL = 4'b0101;
+localparam SLL = 4'b0110;
 localparam LUI = 4'b0111;
 localparam BEQ = 4'b1000;
 localparam BNE = 4'b1001;
 
-   
-   always @ (A or B or shamt or ALUOperation)
+   //se agrega la instruccion en el switch case
+   always @ (A or B or ALUOperation or shamt)
      begin
 		case (ALUOperation)
-		  ADD: // ADD
-			ALUResult = A + B;
-			
-		  SUB: // SUB
-			ALUResult = A - B;
-			
-		  AND: // AND
-			ALUResult = A & B;
-			
- 		  OR: // OR
-			ALUResult = A | B;
-			
-		  NOR: // NOR
-			ALUResult = ~(A | B);
-			
-		  SLL: //SLL
-			ALUResult = B<<shamt;
-			
-		  SRL: //SRL
-		   ALUResult = B>>shamt;
-			
-		  LUI: //LUI
-			ALUResult = B<<16;
-		
-		  BEQ: //BEQ
-			ALUResult = (A == B) ? 1'b0 : 1'b1;
-				
-		  BEQ: //BEQ
-			ALUResult = (A != B) ? 1'b0 : 1'b1;	
-			
+		  ADD: // add
+			ALUResult=A + B;
+		  SUB: // sub
+			ALUResult=A - B;
+		  OR: 
+			ALUResult=A | B;
+		  AND:
+			ALUResult=A & B;
+		  NOR:
+			ALUResult= ~(A | B);
+		  SRL:
+			ALUResult= B >> shamt;
+		  SLL:
+			ALUResult= B << shamt;
+		  LUI:
+			ALUResult= B << 16;
+		  BEQ:
+			ALUResult= (A == B) ? 1'b0 : 1'b1;
+		  BNE:
+			ALUResult= (A != B) ? 1'b0 : 1'b1;
 		default:
 			ALUResult= 0;
 		endcase // case(control)

@@ -65,7 +65,6 @@ wire [31:0] Inmmediate_extend_wire;
 wire [31:0] read_data_2_orr_inmmediate_wire;
 wire [31:0] alu_result_wire;
 wire [31:0] pc_plus_4_wire;
-wire [31:0] inmmediate_extended_wire;
 wire [31:0] pc_to_branch_wire;
 
 // agregado en pract 2
@@ -96,6 +95,22 @@ wire [31:0] MUX_Jal_ReadData_ALUResult_wire;
 //******************************************************************/
 //******************************************************************/
 
+//Modificaciones 
+Control // agregamos las señales faltantes
+ControlUnit
+(
+	.OP(instruction_bus_wire[31:26]),
+	.RegDst(reg_dst_wire),
+	.BranchEQ_NE(branch_eq_ne_wire), //
+	.MemRead (MemRead_wire), 
+	.MemtoReg (MemtoReg_wire), //
+	.MemWrite (MemWrite_wire), //
+	.ALUOp(aluop_wire),
+	.ALUSrc(alu_src_wire),
+	.Jump (Jump_wire), //
+	.RegWrite(reg_write_wire)
+);
+
 //Agregado en pract 2
 DataMemory //conectamos nuestra RAM
 #(	 
@@ -119,8 +134,8 @@ DataMemory
 
 ShiftLeft2 //Mueve la direccion << 2 para poder accedar a memoria (lo haca multiplo de 4) 
 Left2
-(
-	.DataInput(inmmediate_extended_wire),
+( //Inmmediate_extend_wire
+	.DataInput(Inmmediate_extend_wire), //Nos da un error así que concatenamos directamente
 	.DataOutput(ShiftLeft2_SignExt_wire)
 );
 
@@ -138,7 +153,9 @@ Adder32bits //Agrega PC4 al JumpAddress para hacerla de 32 bits
 PC_Adder_Shift2
 (
 	.Data0(pc_plus_4_wire),
-	.Data1(ShiftLeft2_SignExt_wire),
+	
+	//.Data1(Inmmediate_extend_wire),
+	.Data1({Inmmediate_extend_wire[29:0],2'b00}),
 	
 	.Result(PC_Shift2_wire) //queda PC4 + JumpAddress[25-0] + 00
 
@@ -151,21 +168,6 @@ PC_Adder_Shift2
 //******************************************************************/
 //******************************************************************/
 
-//Modificaciones 
-Control // agregamos las señales faltantes
-ControlUnit
-(
-	.OP(instruction_bus_wire[31:26]),
-	.RegDst(reg_dst_wire),
-	.BranchEQ_NE(branch_eq_ne_wire), //
-	.MemRead (MemRead_wire), 
-	.MemtoReg (MemtoReg_wire), //
-	.MemWrite (MemWrite_wire), //
-	.ALUOp(aluop_wire),
-	.ALUSrc(alu_src_wire),
-	.Jump (Jump_wire), //
-	.RegWrite(reg_write_wire)
-);
 
 PC_Register
 ProgramCounter
