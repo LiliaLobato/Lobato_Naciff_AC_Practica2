@@ -34,6 +34,8 @@ localparam SUB = 4'b0100;
 localparam SLL = 4'b0101;
 localparam SRL = 4'b0110;
 localparam LUI = 4'b0111;
+localparam BEQ = 4'b1000;
+localparam BNE = 4'b1001;
 
    
    always @ (A or B or shamt or ALUOperation)
@@ -62,7 +64,13 @@ localparam LUI = 4'b0111;
 			
 		  LUI: //LUI
 			ALUResult = B<<16;
- 
+		
+		  BEQ: //BEQ
+			ALUResult = (A == B) ? 1'b0 : 1'b1;
+				
+		  BEQ: //BEQ
+			ALUResult = (A != B) ? 1'b0 : 1'b1;	
+			
 		default:
 			ALUResult= 0;
 		endcase // case(control)
